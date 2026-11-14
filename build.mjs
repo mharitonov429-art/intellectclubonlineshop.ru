@@ -1,6 +1,7 @@
 // Сборка: node build.mjs  ->  папка dist/
 import { readdir, readFile, writeFile, mkdir, cp, rm } from 'node:fs/promises';
 import { execSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 
 const SITE = 'https://intellectclubonlineshop.ru';
 const NAME = 'Интеллект клуб Юрия Васильева';
@@ -8,6 +9,7 @@ const NAV = [['/klub/', 'Клуб'], ['/kurs-super-jump/', 'Курс'], ['/go-sm
   ['/salavatskiy-rayon/', 'Салаватский район'], ['/svoy-klub/', 'Свой клуб'], ['/kontakty/', 'Контакты']];
 const FOOT = [['/faq/', 'Вопросы'], ['/partnery/', 'Партнёры'], ['/raskrytie-partnerstva/', 'Раскрытие партнёрства'],
   ['/politika-konfidencialnosti/', 'Политика'], ['/cookie/', 'Cookie']];
+const cssV = createHash('md5').update(await readFile('public/style.css')).digest('hex').slice(0, 8);
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
 const files = (await readdir('content')).filter(f => f.endsWith('.html'));
@@ -21,8 +23,8 @@ const have = new Set(pages.map(p => p.path));
 const links = list => list.filter(([u]) => have.has(u)).map(([u, t]) => `<a href="${u}">${t}</a>`).join('\n');
 
 const metrika = `<script>(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=105400274','ym');ym(105400274,'init',{ssr:true,webvisor:true,clickmap:true,referrer:document.referrer,url:location.href,accurateTrackBounce:true,trackLinks:true});</script>`;
-const tail = `<script>document.addEventListener('click',function(e){var a=e.target.closest('[data-goal]');if(a&&window.ym)ym(105400274,'reachGoal',a.dataset.goal)});
-try{if(!localStorage.ck){var b=document.getElementById('ck');b.hidden=false;b.querySelector('button').onclick=function(){localStorage.ck=1;b.hidden=true}}}catch(e){}</script>`;
+const tail = `<script>document.addEventListener('click',function(e){var a=e.target.closest('[data-goal]');if(a&&window.ym)ym(105400274,'reachGoal',a.dataset.goal)});</script>
+<script>(function(){var b=document.getElementById('ck');if(!b)return;var ok=false;try{ok=localStorage.getItem('ck')==='1'}catch(e){}if(ok){b.style.display='none';return}b.style.display='flex';b.querySelector('button').addEventListener('click',function(){try{localStorage.setItem('ck','1')}catch(e){}b.style.display='none'})})();</script>`;
 
 const org = { '@type': 'Organization', '@id': `${SITE}/#org`, name: 'Интеллект-клуб Юрия Васильева', url: `${SITE}/`,
   telephone: '+79613689909', founder: { '@type': 'Person', name: 'Юрий Васильев' },
@@ -51,7 +53,7 @@ for (const p of pages) {
 <meta name="description" content="${esc(p.description)}">
 <link rel="canonical" href="${url}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/style.css?v=${cssV}">
 <meta property="og:type" content="${p.path === '/' ? 'website' : 'article'}">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:site_name" content="${NAME}">
@@ -73,7 +75,7 @@ ${p.body}
 </main>
 <footer><div class="wrap"><nav aria-label="Служебные страницы">${links(FOOT)}</nav>
 <p>© ${NAME}. Васильев Юрий Михайлович, самозанятый. Тел. <a href="tel:+79613689909" data-goal="phone_click">+7 961 368 99 09</a>, Telegram <a href="https://t.me/uravasilev1" data-goal="tg_click">@uravasilev1</a>. Информация не заменяет консультацию врача или психолога.</p></div></footer>
-<div id="ck" hidden><span>Сайт использует cookie и Яндекс Метрику для статистики. Продолжая, вы соглашаетесь с <a href="/cookie/">политикой cookie</a>.</span><button type="button">Принять</button></div>
+<div id="ck"><span>Сайт использует cookie и Яндекс Метрику для статистики. Продолжая, вы соглашаетесь с <a href="/cookie/">политикой cookie</a>.</span><button type="button">Принять</button></div>
 ${tail}
 </body>
 </html>`;
