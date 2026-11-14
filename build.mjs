@@ -6,8 +6,8 @@ import { createHash } from 'node:crypto';
 const SITE = 'https://intellectclubonlineshop.ru';
 const NAME = 'Интеллект клуб Юрия Васильева';
 const NAV = [['/klub/', 'Клуб'], ['/kurs-super-jump/', 'Курс'], ['/go-smile/', 'Go Smile'],
-  ['/salavatskiy-rayon/', 'Салаватский район'], ['/svoy-klub/', 'Свой клуб'], ['/kontakty/', 'Контакты']];
-const FOOT = [['/faq/', 'Вопросы'], ['/partnery/', 'Партнёры'], ['/raskrytie-partnerstva/', 'Раскрытие партнёрства'],
+  ['/salavatskiy-rayon/', 'Салаватский район'], ['/svoy-klub/', 'Свой клуб'], ['/mozg-i-intellekt/', 'Мозг и интеллект'], ['/kontakty/', 'Контакты']];
+const FOOT = [['/faq/', 'Вопросы'], ['/ulybka-i-smeh/', 'Улыбка и смех'], ['/partnery/', 'Партнёры'], ['/raskrytie-partnerstva/', 'Раскрытие партнёрства'],
   ['/politika-konfidencialnosti/', 'Политика'], ['/cookie/', 'Cookie']];
 const cssV = createHash('md5').update(await readFile('public/style.css')).digest('hex').slice(0, 8);
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
